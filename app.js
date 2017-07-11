@@ -1,8 +1,19 @@
-var express = require("express");
-var app = express();
+var express = require("express"),
+    bodyParser = require("body-parser"),
+    expressSanitizer = require("express-sanitizer"),
+    app = express();
+
+//App config
+app.set("view engine", "ejs");
+app.use(express.static("public"));
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+app.use(expressSanitizer());
+
 
 app.get("/", function(req, res) {
-    res.send("IN PROGRESS");
+    res.render("index");
 });
 
 
