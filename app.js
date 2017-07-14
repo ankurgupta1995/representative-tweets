@@ -6,6 +6,7 @@ var express = require("express"),
     session = require("express-session"),
     morgan = require("morgan"),
     cookieParser = require("cookie-parser"),
+    config = require("./config"),
     app = express();
 
 //App config
@@ -24,8 +25,8 @@ app.use(session({
 }));
 
 passport.use(new Strategy({
-    consumerKey: process.env.CONSUMER_KEY,
-    consumerSecret: process.env.CONSUMER_SECRET,
+    consumerKey: config.consumerKey,
+    consumerSecret: config.consumerSecret,
     callbackURL: "/auth/twitter/callback"
 }, function(token, tokenSecret, profile, cb) {
     process.nextTick(function() {
@@ -51,11 +52,6 @@ app.get("/", function(req, res) {
     });
 });
 
-app.get('/account', ensureAuthenticated, function(req, res) {
-    res.render('account', {
-        user: req.user
-    });
-});
 
 app.get('/login', function(req, res) {
     res.redirect('/auth/twitter');
