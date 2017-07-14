@@ -27,7 +27,7 @@ app.use(session({
 passport.use(new Strategy({
     consumerKey: config.consumerKey,
     consumerSecret: config.consumerSecret,
-    callbackURL: "/auth/twitter/callback"
+    callbackURL: config.callbackURL
 }, function(token, tokenSecret, profile, cb) {
     process.nextTick(function() {
         return cb(null, profile);
