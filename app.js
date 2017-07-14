@@ -26,9 +26,11 @@ app.use(session({
 passport.use(new Strategy({
     consumerKey: process.env.CONSUMER_KEY,
     consumerSecret: process.env.CONSUMER_SECRET,
-    callbackURL: "https://representative-tweets-ankurgupta67.c9users.io/login/twitter/return"
+    callbackURL: "/auth/twitter/callback"
 }, function(token, tokenSecret, profile, cb) {
-    return cb(null, profile);
+    process.nextTick(function() {
+        return cb(null, profile);
+    });
 }));
 
 
@@ -44,8 +46,41 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.get("/", function(req, res) {
-    res.render("index");
+    res.render("index", {
+        user: req.user
+    });
 });
+
+app.get('/account', ensureAuthenticated, function(req, res) {
+    res.render('account', {
+        user: req.user
+    });
+});
+
+app.get('/login', function(req, res) {
+    res.redirect('/auth/twitter');
+});
+
+app.get('/auth/twitter', passport.authenticate('twitter'));
+
+app.get('/auth/twitter/callback', passport.authenticate('twitter', {
+    successRedirect: '/',
+    failureRedirect: '/login'
+}), function(req, res) {
+    res.redirect('/');
+});
+
+app.get('/logout', function(req, res) {
+    req.logout();
+    res.redirect('/');
+});
+
+function ensureAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    res.redirect('/login');
+}
 
 
 app.listen(process.env.PORT, process.env.IP, function() {
