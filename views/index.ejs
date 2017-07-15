@@ -69,13 +69,15 @@
 					        <button class="btn btn-secondary" form="search-form" type="submit">Go!</button>
 					    </span>
 						<form action="/" method="POST" id="search-form">
-					     	<input type="text" class="form-control" name="twithandle" placeholder="@twitterhandle">
+					     	<input type="text" class="form-control" name="twithandle" placeholder="@twitterhandle" required>
 					    </form>
 					</div>
 					<p>
 						<% if(searched) { %>
 							<% if(tweets) { %>
-								<p><%=tweets%></p>
+								<% tweets.forEach(function(tweet) { %>
+									<p><%=tweet.text%></p>
+								<% }); %>
 							<% } else { %>
 								<p>No Tweets Found!</p>
 							<% } %>
@@ -84,7 +86,6 @@
 		        </div>
 		     </div>
 		</div>
-
 
 	<script
 	      src="https://code.jquery.com/jquery-3.2.1.min.js"

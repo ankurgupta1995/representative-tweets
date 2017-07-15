@@ -7,6 +7,7 @@ var express = require("express"),
     morgan = require("morgan"),
     cookieParser = require("cookie-parser"),
     config = require("./config"),
+    twitter = require("twitter"),
     app = express();
 
 //App config
@@ -24,12 +25,21 @@ app.use(session({
     saveUninitialized: true
 }));
 
+var twitter_api = new twitter({
+    consumer_key: config.consumerKey,
+    consumer_secret: config.consumerSecret,
+    access_token_key: config.access_token_key,
+    access_token_secret: config.access_token_secret
+});
+
 passport.use(new Strategy({
     consumerKey: config.consumerKey,
     consumerSecret: config.consumerSecret,
     callbackURL: config.callbackURL
 }, function(token, tokenSecret, profile, cb) {
     process.nextTick(function() {
+        twitter_api.access_token_key = token;
+        twitter_api.access_token_secret = tokenSecret;
         return cb(null, profile);
     });
 }));
@@ -70,10 +80,25 @@ app.get('/auth/twitter/callback', passport.authenticate('twitter', {
 
 app.post('/', function(req, res) {
     var tweets;
-    res.render("index", {
-        user: req.user,
-        tweets: tweets,
-        searched: true
+    var params = {
+        screen_name: req.body.twithandle.slice(1),
+        count: 7
+    };
+    console.log(params);
+    twitter_api.get('favorites/list', params, function(error, tweets, response) {
+        var api_response
+        if (!error) {
+            api_response = tweets;
+            console.log(api_response.length);
+        }
+        else {
+            console.log(error);
+        }
+        res.render("index", {
+            user: req.user,
+            tweets: api_response,
+            searched: true
+        });
     });
 });
 
