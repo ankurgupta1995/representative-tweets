@@ -6,9 +6,13 @@ var express = require("express"),
     session = require("express-session"),
     morgan = require("morgan"),
     cookieParser = require("cookie-parser"),
-    config = require("./config"),
     twitter = require("twitter"),
+    config,
     app = express();
+
+if (process.env.environment == "dev") {
+    config = require("./config")
+}
 
 //App config
 app.set("view engine", "ejs");
@@ -26,16 +30,16 @@ app.use(session({
 }));
 
 var twitter_api = new twitter({
-    consumer_key: config.consumerKey || process.env.consumerKey,
-    consumer_secret: config.consumerSecret || process.env.consumerSecret,
-    access_token_key: config.access_token_key || process.env.access_token_key,
-    access_token_secret: config.access_token_secret || process.env.access_token_secret
+    consumer_key: process.env.consumerKey || config.consumerKey,
+    consumer_secret: process.env.consumerSecret || config.consumerSecret,
+    access_token_key: process.env.access_token_key || config.access_token_key,
+    access_token_secret: process.env.access_token_secret || config.access_token_secret
 });
 
 passport.use(new Strategy({
-    consumerKey: config.consumerKey || process.env.consumerKey,
-    consumerSecret: config.consumerSecret || process.env.consumerSecret,
-    callbackURL: config.callbackURL || process.env.callbackURL
+    consumerKey: process.env.consumerKey || config.consumerKey,
+    consumerSecret: process.env.consumerSecret || config.consumerSecret,
+    callbackURL: process.env.callbackURL || config.callbackURL
 }, function(token, tokenSecret, profile, cb) {
     process.nextTick(function() {
         twitter_api.access_token_key = token;
