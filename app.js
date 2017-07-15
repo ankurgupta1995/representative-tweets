@@ -10,7 +10,7 @@ var express = require("express"),
     config,
     app = express();
 
-if (process.env.environment == "dev") {
+if (process.env.environment === "dev") {
     config = require("./config")
 }
 
