@@ -26,16 +26,16 @@ app.use(session({
 }));
 
 var twitter_api = new twitter({
-    consumer_key: config.consumerKey,
-    consumer_secret: config.consumerSecret,
-    access_token_key: config.access_token_key,
-    access_token_secret: config.access_token_secret
+    consumer_key: config.consumerKey || process.env.consumerKey,
+    consumer_secret: config.consumerSecret || process.env.consumerSecret,
+    access_token_key: config.access_token_key || process.env.access_token_key,
+    access_token_secret: config.access_token_secret || process.env.access_token_secret
 });
 
 passport.use(new Strategy({
-    consumerKey: config.consumerKey,
-    consumerSecret: config.consumerSecret,
-    callbackURL: config.callbackURL
+    consumerKey: config.consumerKey || process.env.consumerKey,
+    consumerSecret: config.consumerSecret || process.env.consumerSecret,
+    callbackURL: config.callbackURL || process.env.callbackURL
 }, function(token, tokenSecret, profile, cb) {
     process.nextTick(function() {
         twitter_api.access_token_key = token;
