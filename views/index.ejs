@@ -1,23 +1,99 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>Representative Tweets Finder</title>
-	</head>
-	<body>
-		<% if (!user) { %>
-			<p>
-			<a href="/">Home</a> |
-			<a href="/login">Log In</a>
-			</p>
-		<% } else { %>
-			<p>
-			<a href="/">Home</a> |
-			<a href="/logout">Log Out</a>
-			</p>
-			<p>ID: <%= user.id %></p>
-			<p>Username: <%= user.username %></p>
-			<p>Name :<%= user.displayName %></p>
-			<p>Photos :<img src=<%= user.photos[0].value %>></p>
-		<% } %>
-	</body>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>
+            Representative Tweets
+        </title>
+         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+         <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+         <style>
+         	.image-circle {
+         		border-radius: 20%;
+         	}
+         </style>
+
+    </head>
+    <body>
+
+        <nav class="navbar navbar-default">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                      <span class="sr-only">Toggle navigation</span>
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                    </button>
+
+                    <a class="navbar-brand" href="/">Representative Tweets</a>
+                </div>
+                <div id="navbar" class="collapse navbar-collapse">
+                  <ul class="nav navbar-nav">
+                    <li class="active"><a href="/">Home</a></li>
+                  </ul>
+                  <ul class="nav navbar-nav navbar-right">
+                      <% if(!user){ %>
+                          <li><a href="/login"><i class="fa fa-twitter" aria-hidden="true"></i> Log In</a></li>
+                      <% } else { %>
+                          <li><a href="#">Signed In As <%= user.displayName %></a></li>
+                          <li><a href="/logout">Log Out</a></li>
+                      <% } %>
+                  </ul>
+                </div>
+            </div>
+        </nav>
+
+
+        <div class="container">
+		    <div class="row">
+		    	<% if(user) { %>
+		        <div class="col-md-3">
+		            <div class="thumbnail image-circle">
+		            	<img class='image-responsive image-circle' src=<%= user.photos[0].value.replace("_normal", "") %>>
+		            	<div align="center" class="caption-full">
+		            		<h4><%= user.displayName %></h4>
+		            		<a href="https://www.twitter.com/<% + user.username %>">
+		            			<%= "@" + user.username %>
+		            		</a>
+		            	</div>
+		            </div>
+		        </div>
+		        <div class="col-md-9">
+		        <% } else { %>
+		        <div class="col-md-12">
+		        <% } %>
+		        	<div class="input-group">
+						<span class="input-group-btn">
+					        <button class="btn btn-secondary" form="search-form" type="submit">Go!</button>
+					    </span>
+						<form action="/" method="POST" id="search-form">
+					     	<input type="text" class="form-control" name="twithandle" placeholder="@twitterhandle">
+					    </form>
+					</div>
+					<p>
+						<% if(searched) { %>
+							<% if(tweets) { %>
+								<p><%=tweets%></p>
+							<% } else { %>
+								<p>No Tweets Found!</p>
+							<% } %>
+						<% } %>
+					</p>
+		        </div>
+		     </div>
+		</div>
+
+
+	<script
+	      src="https://code.jquery.com/jquery-3.2.1.min.js"
+	      integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+	      crossorigin="anonymous"></script>
+
+    <!-- Bootstrap JS CDN -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+
+    </body>
 </html>

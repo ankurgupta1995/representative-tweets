@@ -48,7 +48,9 @@ app.use(passport.session());
 
 app.get("/", function(req, res) {
     res.render("index", {
-        user: req.user
+        user: req.user,
+        tweets: null,
+        searched: false
     });
 });
 
@@ -64,6 +66,15 @@ app.get('/auth/twitter/callback', passport.authenticate('twitter', {
     failureRedirect: '/login'
 }), function(req, res) {
     res.redirect('/');
+});
+
+app.post('/', function(req, res) {
+    var tweets;
+    res.render("index", {
+        user: req.user,
+        tweets: tweets,
+        searched: true
+    });
 });
 
 app.get('/logout', function(req, res) {
