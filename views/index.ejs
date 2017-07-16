@@ -12,6 +12,10 @@
          	.image-circle {
          		border-radius: 20%;
          	}
+
+         	#tweet_response {
+         		float: inline-block;
+         	}
          </style>
 
     </head>
@@ -72,20 +76,37 @@
 					     	<input type="text" class="form-control" name="twithandle" placeholder="@twitterhandle" required>
 					    </form>
 					</div>
-					<p>
 						<% if(searched) { %>
-							<% if(tweets) { %>
-								<% tweets.forEach(function(tweet) { %>
-									<p><%=tweet.text%></p>
+							<% if(tweet_list) { %>
+								<% tweet_list.forEach(function(tweet) { %>
+									<div id="tweet_response" align="center">
+										<p><%- tweet %></p>
+									</div>
 								<% }); %>
 							<% } else { %>
 								<p>No Tweets Found!</p>
 							<% } %>
 						<% } %>
-					</p>
 		        </div>
 		     </div>
 		</div>
+
+	<script>window.twttr = (function(d, s, id) {
+		  var js, fjs = d.getElementsByTagName(s)[0],
+		    t = window.twttr || {};
+		  if (d.getElementById(id)) return t;
+		  js = d.createElement(s);
+		  js.id = id;
+		  js.src = "https://platform.twitter.com/widgets.js";
+		  fjs.parentNode.insertBefore(js, fjs);
+
+		  t._e = [];
+		  t.ready = function(f) {
+		    t._e.push(f);
+		  };
+
+		  return t;
+		}(document, "script", "twitter-wjs"));</script>
 
 	<script
 	      src="https://code.jquery.com/jquery-3.2.1.min.js"

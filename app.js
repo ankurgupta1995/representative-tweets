@@ -7,6 +7,8 @@ var express = require("express"),
     morgan = require("morgan"),
     cookieParser = require("cookie-parser"),
     twitter = require("twitter"),
+    async = require("async"),
+    _ = require("underscore"),
     config,
     app = express();
 
@@ -83,26 +85,97 @@ app.get('/auth/twitter/callback', passport.authenticate('twitter', {
 });
 
 app.post('/', function(req, res) {
-    var tweets;
-    var params = {
-        screen_name: req.body.twithandle.slice(1),
-        count: 7
-    };
-    console.log(params);
-    twitter_api.get('favorites/list', params, function(error, tweets, response) {
-        var api_response
-        if (!error) {
-            api_response = tweets;
-            console.log(api_response.length);
+    async.parallel({
+        favs: function(cb) {
+            var params = {
+                screen_name: req.body.twithandle.slice(1),
+                count: 4
+            };
+            twitter_api.get('favorites/list', params, function(error, tweets, response) {
+                if (!error) {
+                    cb(null, tweets);
+                }
+                else {
+                    cb(null, error);
+                }
+            });
+        },
+        pop: function(cb) {
+            var params = {
+                screen_name: req.body.twithandle.slice(1),
+                count: 200
+            };
+            twitter_api.get('statuses/user_timeline', params, function(error, tweets, response) {
+                if (!error) {
+                    cb(null, _.sortBy(tweets, function(tweet) {
+                        return tweet.favorites_count + tweet.statuses_count;
+                    }).splice(0, 3));
+                }
+                else {
+                    cb(null, error);
+                }
+            });
+        },
+        recent: function(cb) {
+            var params = {
+                screen_name: req.body.twithandle.slice(1),
+                count: 3
+            };
+            twitter_api.get('statuses/user_timeline', params, function(error, tweets, response) {
+                if (!error) {
+                    cb(null, tweets);
+                }
+                else {
+                    cb(null, error);
+                }
+            });
+        }
+    }, function(error, results) {
+        var ret_list = [results.favs, results.pop, results.recent];
+        var tweet_list = new Array();
+        ret_list.forEach(function(list) {
+            list.forEach(function(tweet) {
+                tweet_list.push(tweet);
+            });
+        });
+        tweet_list = _.uniq(tweet_list, 'text');
+        var oembed_tweet_list = new Array();
+        async.forEachOf(tweet_list, function(elem, key, cb) {
+            var new_params = {
+                url: "https://www.twitter.com/filler/status/" + elem.id_str,
+                omit_script: 1
+            };
+            twitter_api.get('statuses/oembed', new_params, function(error, output, response) {
+                if (!error) {
+                    oembed_tweet_list.push(output.html);
+                    return cb(null);
+                }
+                else {
+                    return cb(error);
+                }
+            });
+        }, function(error) {
+            if (!error) {
+                res.render("index", {
+                    user: req.user,
+                    tweet_list: oembed_tweet_list,
+                    searched: true
+                });
+            }
+            else {
+                console.log(error);
+            }
+        });
+        /*if (!error) {
+            res.render("index", {
+                user: req.user,
+                tweet_list: _.uniq(tweet_list, 'text'),
+                searched: true
+            });
         }
         else {
             console.log(error);
-        }
-        res.render("index", {
-            user: req.user,
-            tweets: api_response,
-            searched: true
-        });
+        }*/
     });
 });
 
