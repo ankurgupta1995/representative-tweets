@@ -89,7 +89,7 @@ app.post('/', function(req, res) {
         favs: function(cb) {
             var params = {
                 screen_name: req.body.twithandle.slice(1),
-                count: 4
+                count: 8
             };
             twitter_api.get('favorites/list', params, function(error, tweets, response) {
                 if (!error) {
@@ -109,7 +109,7 @@ app.post('/', function(req, res) {
                 if (!error) {
                     cb(null, _.sortBy(tweets, function(tweet) {
                         return tweet.favorites_count + tweet.statuses_count;
-                    }).splice(0, 3));
+                    }).splice(0, 6));
                 }
                 else {
                     cb(null, error);
@@ -119,7 +119,7 @@ app.post('/', function(req, res) {
         recent: function(cb) {
             var params = {
                 screen_name: req.body.twithandle.slice(1),
-                count: 3
+                count: 6
             };
             twitter_api.get('statuses/user_timeline', params, function(error, tweets, response) {
                 if (!error) {
@@ -144,20 +144,26 @@ app.post('/', function(req, res) {
         });
         tweet_list = _.uniq(tweet_list, 'text');
         var oembed_tweet_list = new Array();
+        var count = 0;
         async.forEachOf(tweet_list, function(elem, key, cb) {
-            var new_params = {
-                url: "https://www.twitter.com/filler/status/" + elem.id_str,
-                omit_script: 1
-            };
-            twitter_api.get('statuses/oembed', new_params, function(error, output, response) {
-                if (!error) {
-                    oembed_tweet_list.push(output.html);
-                    return cb(null);
-                }
-                else {
-                    return cb(error);
-                }
-            });
+            if (key < 10) {
+                var new_params = {
+                    url: "https://www.twitter.com/filler/status/" + elem.id_str,
+                    omit_script: 1
+                };
+                twitter_api.get('statuses/oembed', new_params, function(error, output, response) {
+                    if (!error) {
+                        oembed_tweet_list.push(output.html);
+                        return cb(null);
+                    }
+                    else {
+                        return cb(error);
+                    }
+                });
+            }
+            else {
+                cb(error);
+            }
         }, function(error) {
             if (!error) {
                 res.render("index", {
