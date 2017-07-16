@@ -47,54 +47,63 @@
 
         <div class="container">
 		    <div class="row">
-		    	<% if(user) { %>
-			        <div class="col-md-3">
-			            <div class="thumbnail image-circle">
-			            	<img class='image-responsive image-circle' src=<%= user.photos[0].value.replace("_normal", "") %>>
-			            	<div align="center" class="caption-full">
-			            		<h4><%= user.displayName %></h4>
-			            		<a href="https://www.twitter.com/<% + user.username %>">
-			            			<%= "@" + user.username %>
-			            		</a>
-			            	</div>
-			            </div>
-			        </div>
-			        <div class="container">
-			        	<div class="row">
-			        		<div class="col-md-9">
-		        <% } else { %>
-		        	<div class="col-md-12">
-		        <% } %>
-	        	<div class="input-group">
-					<span class="input-group-btn">
-				        <button class="btn btn-secondary" form="search-form" type="submit">Go!</button>
-				    </span>
-					<form action="/" method="POST" id="search-form">
-				     	<input type="text" class="form-control" name="twithandle" placeholder="@twitterhandle" required>
-				    </form>
-				</div>
-				<% if(searched) { %>
-					<div class="container">
+		   	<% if(user) { %>
+		        <div class="col-md-3">
+		            <div class="thumbnail image-circle">
+		            	<img class='image-responsive image-circle' src=<%= user.photos[0].value.replace("_normal", "") %>>
+		            	<div align="center" class="caption-full">
+		            		<h4><%= user.displayName %></h4>
+		            		<a href="https://www.twitter.com/<% + user.username %>">
+		            			<%= "@" + user.username %>
+		            		</a>
+		            	</div>
+		            </div>
+		        </div>
+		        <div class="col-md-9">
+			<% } else { %>
+	        	<div class="col-md-12">
+	        <% } %>
+		        <div class="container">
+				    <div class="row">
+				    	<div class="col-md-12">
+				        	<div class="input-group">
+								<span class="input-group-btn">
+							        <button class="btn btn-secondary" form="search-form" type="submit">Go!</button>
+							    </span>
+								<form action="/" method="POST" id="search-form">
+							     	<input type="text" class="form-control" name="twithandle" placeholder="@twitterhandle" required>
+							    </form>
+							</div>
+						</div>
+					</div>
+					<% if(searched) { %>
+					<div class=row>
+						<div class="col-lg-12 col-md-6">
+							<div class="container">
 							<% if(tweet_list) { %>
 								<div class="row">
-										<div class="col-md-12">
-											<p class="lead" align="center">Found <%= tweet_list.length %> tweets representative of <%= search_q %></p>
-										</div>
+									<div class="col-lg-12">
+										<p class="lead" align="center">Found <%= tweet_list.length %> tweets representative of <%= search_q %></p>
+									</div>
 								</div>
 								<div class="row" style="display:flex; flex-wrap:wrap">
 										<% tweet_list.forEach(function(tweet) { %>
-											<div class="col-md-4 col-sm-12">
+											<div class="col-md-3 col-sm-12">
 													<%- tweet %>
 											</div>
 										<% }); %>
 								</div>
 							<% } else { %>
-								<p>No Tweets Found!</p>
+								<div class="row">
+									<div class="col-md-12">
+										<p class="lead" align="center">No tweets found representative of <%= search_q %></p>
+									</div>
+								</div>
 							<% } %>
-						<% } %>
+							</div>
+						</div>
 					</div>
-					</div>
-					</div>
+					<% } %>
 					</div>
 		        </div>
 		     </div>
