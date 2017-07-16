@@ -159,23 +159,14 @@ app.post('/', function(req, res) {
                 res.render("index", {
                     user: req.user,
                     tweet_list: oembed_tweet_list,
-                    searched: true
+                    searched: true,
+                    search_q: req.body.twithandle
                 });
             }
             else {
                 console.log(error);
             }
         });
-        /*if (!error) {
-            res.render("index", {
-                user: req.user,
-                tweet_list: _.uniq(tweet_list, 'text'),
-                searched: true
-            });
-        }
-        else {
-            console.log(error);
-        }*/
     });
 });
 
