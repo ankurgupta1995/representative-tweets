@@ -134,9 +134,13 @@ app.post('/', function(req, res) {
         var ret_list = [results.favs, results.pop, results.recent];
         var tweet_list = new Array();
         ret_list.forEach(function(list) {
-            list.forEach(function(tweet) {
-                tweet_list.push(tweet);
-            });
+            if (list.length > 0) {
+                list.forEach(function(tweet) {
+                    if (tweet) {
+                        tweet_list.push(tweet);
+                    }
+                });
+            }
         });
         tweet_list = _.uniq(tweet_list, 'text');
         var oembed_tweet_list = new Array();
