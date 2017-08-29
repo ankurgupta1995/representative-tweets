@@ -1,5 +1,4 @@
 # representative-tweets
-Project for Juji, Inc
 
 Link: https://representative-tweets.herokuapp.com/
 
